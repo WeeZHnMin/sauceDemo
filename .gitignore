@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+*__pycache__/
+dist/
+build/
+logs/
+test_reports/
+jenkins/
+
+
+# Virtual environment
+venv/
+.venv/
+env/
+ENV/
+*.env
+*.zip
+
+# Editor & IDE
+.vscode/
+.idea/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Pytest
+htmlcov/
+.cache/
+.pytest_cache/
+
+# Flask/Middleware specific
+instance/
+*.db
+*.sqlite3
+*.pkl
