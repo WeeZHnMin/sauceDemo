@@ -1,4 +1,5 @@
 pytest
+pytest-ordering
 selenium
 pytest-html
 openpyxl

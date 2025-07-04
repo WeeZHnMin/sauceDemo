@@ -12,13 +12,14 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from core.webdriver_utils import WebDriverManager
+from core.test_suite_manager import test_suite_manager
 from reports.test_reporter import test_reporter, TestResult
 from core.logger_config import logger
 from core.exceptions import TestException
 
 @pytest.fixture(scope="function")
 def driver():
-    """WebDriver fixture"""
+    """WebDriver fixture - 传统模式，每个测试独立浏览器"""
     driver = None
     try:
         driver = WebDriverManager.create_driver()
@@ -30,6 +31,25 @@ def driver():
         if driver:
             WebDriverManager.close_driver(driver)
 
+@pytest.fixture(scope="session")
+def shared_driver():
+    """共享WebDriver fixture - 会话级别，支持浏览器复用"""
+    try:
+        success = test_suite_manager.start_session()
+        if not success:
+            pytest.fail("无法启动共享测试会话")
+        yield test_suite_manager.get_driver()
+    except Exception as e:
+        logger.error(f"共享WebDriver初始化失败: {str(e)}")
+        pytest.fail(f"共享WebDriver初始化失败: {str(e)}")
+    finally:
+        test_suite_manager.end_session()
+
+@pytest.fixture(scope="function")
+def suite_manager():
+    """测试套件管理器fixture"""
+    return test_suite_manager
+
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     """收集测试结果的钩子函数"""
@@ -38,7 +58,16 @@ def pytest_runtest_makereport(item, call):
     
     if rep.when == "call":
         test_name = item.name
-        username = item.callspec.params.get('username', '') if hasattr(item, 'callspec') else ''
+        
+        # 获取用户名 - 支持新的测试结构
+        username = ""
+        if hasattr(item, 'callspec') and item.callspec:
+            username = item.callspec.params.get('username', '')
+        elif hasattr(item, 'fixturenames') and 'suite_manager' in item.fixturenames:
+            # 从测试套件管理器获取当前用户
+            if test_suite_manager.get_current_user():
+                username = test_suite_manager.get_current_user()
+        
         status = "PASSED" if rep.passed else "FAILED"
         execution_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
