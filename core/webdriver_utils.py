@@ -30,6 +30,8 @@ class WebDriverManager:
             options.add_argument("--headless")  # 无头模式
             options.add_argument("--width=1200")
             options.add_argument("--height=800")
+            options.add_argument("--disable-dev-shm-usage")
+            options.add_argument("--no-sandbox")
             
             # 创建WebDriver (使用系统Firefox)
             driver = webdriver.Firefox(options=options)
