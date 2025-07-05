@@ -2,15 +2,17 @@
 WebDriver工具类
 """
 import time
+import tempfile
+import os
 from selenium import webdriver
-from selenium.webdriver.edge.service import Service
-from selenium.webdriver.edge.options import Options
+from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, WebDriverException
 
-from config import EDGE_DRIVER_PATH, BROWSER_OPTIONS, DEFAULT_WAIT_TIME, IMPLICIT_WAIT_TIME, PAGE_LOAD_TIMEOUT
+from config import BROWSER_OPTIONS, DEFAULT_WAIT_TIME, IMPLICIT_WAIT_TIME, PAGE_LOAD_TIMEOUT
 from core.logger_config import logger
 from core.exceptions import ElementException
 
@@ -23,16 +25,16 @@ class WebDriverManager:
         try:
             logger.info("开始创建WebDriver实例")
             
-            # 配置Edge选项
+            # 配置Firefox选项
             options = Options()
-            for option in BROWSER_OPTIONS:
-                options.add_argument(option)
+            options.add_argument("--headless")  # 无头模式
+            options.add_argument("--width=1200")
+            options.add_argument("--height=800")
+            options.add_argument("--disable-dev-shm-usage")
+            options.add_argument("--no-sandbox")
             
-            # 创建Service
-            service = Service(EDGE_DRIVER_PATH)
-            
-            # 创建WebDriver
-            driver = webdriver.Edge(service=service, options=options)
+            # 创建WebDriver (使用系统Firefox)
+            driver = webdriver.Firefox(options=options)
             
             # 设置超时
             driver.implicitly_wait(IMPLICIT_WAIT_TIME)

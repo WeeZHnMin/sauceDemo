@@ -25,7 +25,7 @@ EDGE_DRIVER_PATH = ''
 
 # 浏览器选项
 BROWSER_OPTIONS = [
-    # "--headless",  # 无头模式
+    "--headless",  # 无头模式
     "--disable-gpu", # 禁用GPU加速
     "--no-sandbox", # 禁用沙盒模式
     "--disable-dev-shm-usage", # 禁用/dev/shm使用

@@ -95,48 +95,48 @@ class InventoryPage(BasePage):
     CART_LINK = (By.CLASS_NAME, "shopping_cart_link")
     PRODUCT_IMAGE_LINK = (By.CSS_SELECTOR, ".inventory_item_img a")
     
-    # def reset_app_state(self):
-    #     """🔥 新增：重置应用状态功能"""
-    #     try:
-    #         logger.info("开始重置应用状态")
+    def reset_app_state(self):
+        """🔥 新增：重置应用状态功能"""
+        try:
+            logger.info("开始重置应用状态")
             
-    #         # 检查当前是否在inventory页面，如果不在则先导航过去
-    #         if "inventory" not in self.driver.current_url:
-    #             self.driver.get(BASE_URL + "inventory.html")
-    #             time.sleep(0.2)
+            # 检查当前是否在inventory页面，如果不在则先导航过去
+            if "inventory" not in self.driver.current_url:
+                self.driver.get(BASE_URL + "inventory.html")
+                time.sleep(0.2)
             
-    #         # 1. 点击菜单按钮打开侧边栏
-    #         menu_button = self.element_ops.safe_find_element(self.driver, *self.MENU_BUTTON)
-    #         self.element_ops.safe_click(self.driver, menu_button)
+            # 1. 点击菜单按钮打开侧边栏
+            menu_button = self.element_ops.safe_find_element(self.driver, *self.MENU_BUTTON)
+            self.element_ops.safe_click(self.driver, menu_button)
             
-    #         time.sleep(0.2)  # 等待菜单打开
+            time.sleep(0.2)  # 等待菜单打开
             
-    #         # 2. 点击Reset App State链接
-    #         reset_link = self.element_ops.safe_find_element(self.driver, *self.RESET_APP_STATE_LINK)
-    #         self.element_ops.safe_click(self.driver, reset_link)
+            # 2. 点击Reset App State链接
+            reset_link = self.element_ops.safe_find_element(self.driver, *self.RESET_APP_STATE_LINK)
+            self.element_ops.safe_click(self.driver, reset_link)
             
-    #         time.sleep(0.2)  # 等待重置完成
+            time.sleep(0.2)  # 等待重置完成
             
-    #         # 3. 关闭菜单（点击X按钮）
-    #         try:
-    #             close_button = self.element_ops.safe_find_element(self.driver, *self.MENU_CLOSE_BUTTON, timeout=3)
-    #             self.element_ops.safe_click(self.driver, close_button)
-    #             time.sleep(0.3)
-    #         except Exception as e:
-    #             logger.warning(f"关闭菜单失败，尝试点击页面其他区域: {str(e)}")
-    #             # 如果关闭按钮点击失败，尝试点击页面其他区域来关闭菜单
-    #             try:
-    #                 self.driver.find_element(By.CLASS_NAME, "inventory_container").click()
-    #                 time.sleep(0.3)
-    #             except:
-    #                 pass
+            # 3. 关闭菜单（点击X按钮）
+            try:
+                close_button = self.element_ops.safe_find_element(self.driver, *self.MENU_CLOSE_BUTTON, timeout=3)
+                self.element_ops.safe_click(self.driver, close_button)
+                time.sleep(0.3)
+            except Exception as e:
+                logger.warning(f"关闭菜单失败，尝试点击页面其他区域: {str(e)}")
+                # 如果关闭按钮点击失败，尝试点击页面其他区域来关闭菜单
+                try:
+                    self.driver.find_element(By.CLASS_NAME, "inventory_container").click()
+                    time.sleep(0.3)
+                except:
+                    pass
             
-    #         logger.info("应用状态重置完成")
+            logger.info("应用状态重置完成")
             
-    #     except Exception as e:
-    #         logger.error(f"重置应用状态失败: {str(e)}")
-    #         # 重置失败不应该导致测试失败，只记录警告
-    #         logger.warning("应用状态重置失败，继续执行后续操作")
+        except Exception as e:
+            logger.error(f"重置应用状态失败: {str(e)}")
+            # 重置失败不应该导致测试失败，只记录警告
+            logger.warning("应用状态重置失败，继续执行后续操作")
     
     def logout(self):
         """登出功能"""
@@ -176,7 +176,8 @@ class InventoryPage(BasePage):
             select = Select(sort_dropdown)
             select.select_by_value(sort_value)
             
-            time.sleep(0.2)  # 等待排序生效
+            # 增加等待时间，确保排序完全生效
+            time.sleep(1.0)  # 从0.2秒增加到1.0秒
             logger.info(f"商品排序完成: {sort_value}")
             
         except Exception as e:
