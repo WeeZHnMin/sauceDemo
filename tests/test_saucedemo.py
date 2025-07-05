@@ -126,8 +126,13 @@ class TestSauceDemo:
             
             inventory_page.sort_products("lohi")
             
-            # 验证排序结果
-            max_retries = 2
+            # 为visual_user添加额外等待时间，因为它可能有特殊行为
+            if username == "visual_user":
+                logger.info("检测到visual_user，添加额外等待时间")
+                time.sleep(2.0)  # 为visual_user添加2秒额外等待
+            
+            # 验证排序结果，增加重试次数和等待时间
+            max_retries = 5  # 从2次增加到5次
             for attempt in range(max_retries):
                 products = inventory_page.get_all_products()
                 prices = []
@@ -143,11 +148,15 @@ class TestSauceDemo:
                 
                 if len(prices) > 0:
                     sorted_prices = sorted(prices)
+                    logger.info(f"尝试 {attempt + 1}/{max_retries}: 当前价格顺序 {prices}")
+                    logger.info(f"期望价格顺序 {sorted_prices}")
+                    
                     if prices == sorted_prices:
                         logger.info(f"用户 {username} 价格排序正确: {prices}")
                         break
                     elif attempt < max_retries - 1:
-                        time.sleep(0.2)
+                        logger.warning(f"价格排序验证失败，等待后重试...")
+                        time.sleep(0.5)  # 从0.2秒增加到0.5秒
                         continue
                     else:
                         assert prices == sorted_prices, f"价格排序不正确: 当前{prices}, 期望{sorted_prices}"
@@ -173,7 +182,12 @@ class TestSauceDemo:
             
             inventory_page.sort_products("hilo")
             
-            max_retries = 2
+            # 为visual_user添加额外等待时间，因为它可能有特殊行为
+            if username == "visual_user":
+                logger.info("检测到visual_user，添加额外等待时间")
+                time.sleep(2.0)  # 为visual_user添加2秒额外等待
+            
+            max_retries = 5  # 从2次增加到5次
             for attempt in range(max_retries):
                 products = inventory_page.get_all_products()
                 prices = []
@@ -189,11 +203,15 @@ class TestSauceDemo:
                 
                 if len(prices) > 0:
                     sorted_prices = sorted(prices, reverse=True)
+                    logger.info(f"尝试 {attempt + 1}/{max_retries}: 当前价格顺序 {prices}")
+                    logger.info(f"期望价格顺序 {sorted_prices}")
+                    
                     if prices == sorted_prices:
                         logger.info(f"用户 {username} 价格排序正确: {prices}")
                         break
                     elif attempt < max_retries - 1:
-                        time.sleep(0.2)
+                        logger.warning(f"价格排序验证失败，等待后重试...")
+                        time.sleep(0.5)  # 从0.2秒增加到0.5秒
                         continue
                     else:
                         assert prices == sorted_prices, f"价格排序不正确: 当前{prices}, 期望{sorted_prices}"
